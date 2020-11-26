@@ -12,6 +12,6 @@ Pixel placing design &amp; strategy game
 ## Running the app
 1. Open 3 terminal windows
 2. cd to "client" "authServer" and "server" in each window respectively
-3. In "client", run 'ng build --watch' to start the angular app
+3. In "client", run 'ng build --watch' to build the angular app and watch for changes
 4. In both "authServer" and "server", run 'node server.js' or 'nodemon server.js' if you have nodemon installed
 5. Navigate to localhost:8000 (or localhost:YOUR_PORT if you changed the port) in your web browser of choice (chrome recommended) and your app should be running smoothly.
