@@ -1,0 +1,9 @@
+.pixel {
+    display: inline-block;
+    border: 1px solid black;
+    width: 15px;
+    height: 15px;
+}
+.pixel-row {
+    height: 15px;
+}

@@ -1,0 +1,7 @@
+<div *ngIf="!isLoggedIn">
+    <h1>Hello there.</h1>
+    <p>Won't you please <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">Register</a>?</p>
+</div>
+<div *ngIf="isLoggedIn && this.user">
+    <h1>Welcome, {{user.username}}!</h1>
+</div>

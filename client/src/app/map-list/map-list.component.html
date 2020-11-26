@@ -1,0 +1,18 @@
+<h1>Map List</h1>
+<table class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <th>Theme</th>
+        <th>Height</th>
+        <th>Width</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let map of maps">
+            <td>{{ map.theme }}</td>
+            <td>{{ map.height }}</td>
+            <td>{{ map.width }}</td>
+            <td><a [routerLink]="['/maps', map._id]" role="button" class="btn btn-primary">Go to map</a><button class="btn btn-danger" (click)="removeMap(map)">Delete</button></td>
+        </tr>
+    </tbody>
+</table>
+<a [routerLink]="['/newmap']"><button class="btn btn-primary">Add a map</button></a>

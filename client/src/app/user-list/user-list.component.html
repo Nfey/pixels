@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-md">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Role</th>
+                    <th *ngIf="loggedInUser && loggedInUser.role == 'admin'">Actions</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="loggedInUser">
+                <tr *ngFor="let user of users">
+                    <td>{{user.email}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.firstName}}</td>
+                    <td>{{user.lastName}}</td>
+                    <td>{{user.role}}</td>
+                    <td *ngIf="loggedInUser && loggedInUser.role == 'admin'"><button class="btn btn-danger" (click)="deleteUser(user._id)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

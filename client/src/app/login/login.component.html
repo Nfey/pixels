@@ -1,0 +1,27 @@
+<h1>Sign in</h1>
+<p>Not a member? Please <a [routerLink]="['/register']">register</a> instead.</p>
+<div class="row">
+    <form class="col-sm-6" (submit)="login()">
+        <div *ngIf="serverError">
+            <p style="color: red;">{{serverError}}</p>
+        </div>
+        <div class="form-group">
+            <div class="emailErrors" *ngIf="email.invalid && (email.dirty || email.touched)">
+                <p *ngIf="email.errors.required" style="color: red;">Email is required.</p>
+                <p *ngIf="email.errors.minlength" style="color: red;">Email must be at least 5 characters long</p>
+            </div>
+            <label for="email">Email</label>
+            <input class="form-control" type="email" name="email" [(ngModel)]="user.email" required #email="ngModel">
+        </div>
+        <div class="form-group">
+            <div class="passwordErrors" *ngIf="password.invalid && (password.dirty || password.touched)">
+                <p *ngIf="password.errors.required" style="color: red;">Password is required.</p>
+                <p *ngIf="password.errors.minlength" style="color: red;">Password must be at least 6 characters long</p>
+            </div>
+            <label for="password">Password</label>
+            <input class="form-control" type="password" name="password" [(ngModel)]="user.password" required #password="ngModel">
+        </div>
+        <input *ngIf="email.valid && password.valid" class="btn btn-primary" role="button" type="submit" value="Submit">
+        <button *ngIf="!(email.valid && password.valid)" class="btn btn-primary disabled">Submit</button>
+    </form>
+</div>
