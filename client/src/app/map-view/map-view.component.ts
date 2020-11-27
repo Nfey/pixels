@@ -12,7 +12,7 @@ import { SocketService } from '../socket.service';
 })
 export class MapViewComponent implements OnInit, OnDestroy {
   map;
-  colors = ['red','blue','green']
+  colors = ['red','blue','green', 'white']
   color = "green";
   newPixel: { map_pos: { map: any, x: Number, y: Number }, color: String, heat: Number, effect: String, strength: Number } = { map_pos: { map: 0, x: 0, y: 0 }, color: "white", heat: 0, effect: "none", strength: 1 }
   pixelGrid = [];

@@ -2,7 +2,7 @@
     <h2>Theme: {{map.theme}}</h2>
     <p>height: {{map.height}}</p>
     <p>width: {{map.width}}</p>
-    <button *ngFor="let color of colors" (click)="setColor(color)" class="btn" [style.background-color]="color" style="color: white;">{{color}}</button>
+    <button *ngFor="let color of colors" (click)="setColor(color)" class="btn" [style.background-color]="color">{{color}}</button>
     <div class="pixel-row" *ngFor="let row of pixelGrid">
         <div class="pixel" *ngFor="let pixel of row" (click)="claimPixel(pixel)" [style.background-color]="pixel.color"></div>
     </div>
