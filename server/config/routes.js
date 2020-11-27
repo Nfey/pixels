@@ -4,7 +4,7 @@ const maps = require('../controllers/maps.js');
 module.exports = (app, server) => {
     const socketFunctions = require('./sockets')(server);
     const pixels = require('../controllers/pixels')(socketFunctions);
-    
+
     app.get('/api/users', users.authenticateToken, (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));
     app.get('/api/user', users.authenticateToken, (req, res) => users.getUserByTokenId(req, res));
@@ -26,33 +26,3 @@ module.exports = (app, server) => {
         res.sendFile(path.resolve('../client/dist/client/index.html'));
     });
 }
-
-
-
-// function a(req, res){
-//     req.body
-//     res.sendFile("html file");
-// }
-// // a = (req, res) => {
-// //    req.body
-// //    res.sendFile("html file");
-// // };
-
-// function g(url, func){
-//     //when url is visited/called/requested
-//     request = {
-//         params: "",
-//         body: "Whatever info is sent along with the request to the url"}
-//     response = {
-//         send: function(args){
-//             //make server respond with args
-//         },
-//         json: function(args){
-//             //convert args to json
-//             //make server respond with args
-//         }
-//     }
-//     func(request, response);
-// }
-// var url = "/api/test"
-// g(url, a)
