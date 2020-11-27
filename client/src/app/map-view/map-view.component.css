@@ -7,3 +7,6 @@
 .pixel-row {
     height: 15px;
 }
+.pixel:hover {
+    filter: brightness(85%);
+}

@@ -1,7 +1,7 @@
 <div class="map-info" *ngIf="map">
     <h2>Theme: {{map.theme}}</h2>
     <div class="pixel-row" *ngFor="let row of pixelGrid">
-        <div class="pixel" *ngFor="let pixel of row" (click)="claimPixel(pixel)" [style.background-color]="pixel.color">
+        <div class="pixel" *ngFor="let pixel of row" (click)="claimPixel(pixel)" (mouseover)="pixel.hover=true" (mouseout)="pixel.hover=false" [style.background-color]="pixel.color" [ngStyle]="{ backgroundColor: pixel.hover==true  ? color : pixel.color }">
         </div>
     </div>
     <br>
