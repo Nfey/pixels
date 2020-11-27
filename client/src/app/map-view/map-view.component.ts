@@ -12,7 +12,7 @@ import { SocketService } from '../socket.service';
 })
 export class MapViewComponent implements OnInit, OnDestroy {
   map;
-  colors = ['red','blue','green', 'white']
+  colors = ['red', 'blue', 'green', 'white']
   color = "green";
   newPixel: { map_pos: { map: any, x: Number, y: Number }, color: String, heat: Number, effect: String, strength: Number } = { map_pos: { map: 0, x: 0, y: 0 }, color: "white", heat: 0, effect: "none", strength: 1 }
   pixelGrid = [];
@@ -41,19 +41,18 @@ export class MapViewComponent implements OnInit, OnDestroy {
           console.log(pixel);
           this.pixelGrid[pixel['map_pos'].y][pixel['map_pos'].x] = pixel;
         });
-        
       });
     });
   }
-  claimPixel(pixel){
+  claimPixel(pixel) {
     pixel.color = this.color;
     this._api.claimPixel(pixel).subscribe();
   }
-  setColor(color){
+  setColor(color) {
     this.color = color;
   }
-  ngOnDestroy(){
-    if(this.claimUpdateSubscription){
+  ngOnDestroy() {
+    if (this.claimUpdateSubscription) {
       this.claimUpdateSubscription.unsubscribe();
     }
   }
