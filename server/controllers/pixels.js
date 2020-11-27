@@ -27,7 +27,7 @@ module.exports = socketFunctions => {
             Pixel.create(req.body)
                 .then(pixel => {
                     res.json(pixel);
-                    Map.findByIdAndUpdate(pixel.map_pos.map, { $push: { pixels: pixel } })
+                    Map.findByIdAndUpdate(pixel.map_pos.map, { $push: { pixels: pixel } }, { useFindAndModify: false })
                         .then()
                         .catch(e => console.log(e));
                     console.log('created');
@@ -53,7 +53,7 @@ module.exports = socketFunctions => {
                     Pixel.findById(req.body._id)
                         .then(pixel => {
                             pixel.color = req.body.color;
-                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } })
+                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false })
                                 .then(previousOwner => {
                                     pixel.owner = user._id;
                                     pixel.save();
