@@ -21,6 +21,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._route.params.subscribe(params => {
+      // TODO: Display 404 message if map does not exist in database
       this._api.getMapById(params.id).subscribe(map => {
         this.map = map;
         this.newPixel.map_pos.map = map['_id'];
@@ -52,7 +53,8 @@ export class MapViewComponent implements OnInit, OnDestroy {
     this.color = color;
   }
   ngOnDestroy(){
-    this.claimUpdateSubscription.unsubscribe();
+    if(this.claimUpdateSubscription){
+      this.claimUpdateSubscription.unsubscribe();
+    }
   }
-  
 }
