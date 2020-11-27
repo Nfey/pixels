@@ -53,14 +53,18 @@ module.exports = socketFunctions => {
                     Pixel.findById(req.body._id)
                         .then(pixel => {
                             pixel.color = req.body.color;
-                            pixel.owner = user._id;
-                            pixel.save();
-                            if (!user.pixels.includes(pixel._id)) {
-                                user.pixels.push(pixel);
-                                user.save();
-                            }
-                            socketFunctions.io.emit('pixelClaimed', pixel);
-                            res.json(pixel);
+                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } })
+                                .then(previousOwner => {
+                                    pixel.owner = user._id;
+                                    pixel.save();
+                                    if (!user.pixels.includes(pixel._id)) {
+                                        user.pixels.push(pixel);
+                                        user.save();
+                                    }
+                                    socketFunctions.io.emit('pixelClaimed', pixel);
+                                    res.json(pixel);
+                                })
+                                .catch(e => res.status(420).json(e));
                         })
                         .catch(e => res.status(422).json(e));
                 })
