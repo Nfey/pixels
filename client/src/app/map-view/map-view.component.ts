@@ -20,6 +20,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
   constructor(private _api: ApiService, private _route: ActivatedRoute, private _sockets: SocketService) { }
 
   ngOnInit(): void {
+    //TODO: Clean up this mess of subscriptions
     this._route.params.subscribe(params => {
       // TODO: Display 404 message if map does not exist in database
       this._api.getMapById(params.id).subscribe(map => {
@@ -46,6 +47,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
   }
   claimPixel(pixel) {
     pixel.color = this.color;
+    delete pixel.hover;
     this._api.claimPixel(pixel).subscribe();
   }
   setColor(color) {
