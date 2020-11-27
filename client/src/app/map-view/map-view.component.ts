@@ -44,11 +44,6 @@ export class MapViewComponent implements OnInit, OnDestroy {
       });
     });
   }
-  onSubmit() {
-    this._api.createPixel(this.newPixel).subscribe(pixel => {
-      this.newPixel = { map_pos: { map: this.map['_id'], x: 0, y: 0 }, color: "white", heat: 0, effect: "none", strength: 1 }
-    });
-  }
   claimPixel(pixel){
     pixel.color = this.color;
     this._api.claimPixel(pixel).subscribe();
