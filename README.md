@@ -1,5 +1,5 @@
 # Pixels
-Pixel placing design &amp; strategy game
+Pixel placing design &amp; strategy game (currently in development)
 
 ## Setup
 1. Clone Repo
