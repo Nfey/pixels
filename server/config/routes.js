@@ -2,8 +2,8 @@ const path = require('path');
 const users = require('../controllers/users');
 const maps = require('../controllers/maps.js');
 module.exports = (app, server) => {
-    const socketFunctions = require('./sockets')(server);
-    const pixels = require('../controllers/pixels')(socketFunctions);
+    const io = require('./sockets')(server);
+    const pixels = require('../controllers/pixels')(io);
 
     app.get('/api/users', users.authenticateToken, (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));

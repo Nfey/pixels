@@ -3,7 +3,7 @@ const Pixel = require('../models/pixel').model;
 const Map = require('../models/map').model;
 const User = require('../models/user');
 
-module.exports = socketFunctions => {
+module.exports = io => {
     return {
         getAll: (req, res) => {
             Pixel.find()
@@ -17,7 +17,6 @@ module.exports = socketFunctions => {
         },
         getByMap: (req, res) => {
             id = mongoose.Types.ObjectId(req.params.id);
-            console.log(id);
             Pixel.find({ 'map_pos.map': id }).sort('map_pos.y').sort('map_pos.x')
                 .then(pixels => res.json(pixels))
                 .catch(e => res.status(422).json(e));
@@ -61,7 +60,7 @@ module.exports = socketFunctions => {
                                         user.pixels.push(pixel);
                                         user.save();
                                     }
-                                    socketFunctions.io.emit('pixelClaimed', pixel);
+                                    io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
                                     res.json(pixel);
                                 })
                                 .catch(e => res.status(420).json(e));

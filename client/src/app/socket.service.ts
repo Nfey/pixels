@@ -8,15 +8,26 @@ import { io } from 'socket.io-client';
 export class SocketService {
 
   observer: Observer<any>;
+  socket;
   constructor() { }
 
   getClaimUpdates() {
-    const socket = io('http://localhost:8000/');
-    socket.on('pixelClaimed', pixel => {
+    this.socket.on('pixelClaimed', pixel => {
       return this.observer.next(pixel);
     });
     return this.createObservable();
   }
+  joinRoom(id) {
+    this.socket = io('http://localhost:8000/');
+    this.socket.emit('join_room', id);
+    // this.socket.on('joined', _=> {
+    //   console.log('room joined');
+    // });
+  }
+  leaveRoom(){
+    this.socket.emit('leave-room');
+  }
+
 
   createObservable() {
     return new Observable(observer => this.observer = observer);

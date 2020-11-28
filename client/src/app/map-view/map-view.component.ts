@@ -23,10 +23,10 @@ export class MapViewComponent implements OnInit, OnDestroy {
     //TODO: Clean up this mess of subscriptions
     this._route.params.subscribe(params => {
       // TODO: Display 404 message if map does not exist in database
+      this._sockets.joinRoom(params.id);
       this._api.getMapById(params.id).subscribe(map => {
         this.map = map;
         this.newPixel.map_pos.map = map['_id'];
-        console.log(map['_id']);
         this._api.getPixelsFromMapId(map['_id']).subscribe(pixels => {
           this.map.pixels = pixels;
           for (let y = 0; y < this.map.height; y++) {
@@ -56,6 +56,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.claimUpdateSubscription) {
       this.claimUpdateSubscription.unsubscribe();
+      this._sockets.leaveRoom();
     }
   }
 }
