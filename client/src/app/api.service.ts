@@ -45,5 +45,11 @@ export class ApiService {
   claimPixel(pixel){
     return this._http.post(`/api/pixels/claim`, pixel);
   }
+  sendMessage(message){
+    return this._http.post(`/api/messages`, message);
+  }
+  getMessages(){
+    return this._http.get(`/api/messages`);
+  }
   
 }

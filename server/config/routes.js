@@ -4,6 +4,7 @@ const maps = require('../controllers/maps.js');
 module.exports = (app, server) => {
     const io = require('./sockets')(server);
     const pixels = require('../controllers/pixels')(io);
+    const messages = require('../controllers/messages')(io);
 
     app.get('/api/users', users.authenticateToken, (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));
@@ -15,6 +16,9 @@ module.exports = (app, server) => {
     app.put('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.update(req, res));
     app.delete('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.delete(req, res));
     app.post('/api/pixels/claim', users.authenticateToken, (req, res) => pixels.claim(req, res));
+
+    app.post('/api/messages', (req, res) => messages.create(req, res));
+    app.get('/api/messages', (req, res) => messages.getAll(req, res));
 
     app.get('/api/maps', users.authenticateToken, (req, res) => maps.getAll(req, res));
     app.get('/api/maps/:id', users.authenticateToken, (req, res) => maps.getOne(req, res));

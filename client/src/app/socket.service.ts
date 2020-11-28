@@ -7,15 +7,22 @@ import { io } from 'socket.io-client';
 })
 export class SocketService {
 
-  observer: Observer<any>;
+  claimObserver: Observer<any>;
+  messageObserver: Observer<any>;
   socket;
   constructor() { }
 
   getClaimUpdates() {
     this.socket.on('pixelClaimed', pixel => {
-      return this.observer.next(pixel);
+      return this.claimObserver.next(pixel);
     });
-    return this.createObservable();
+    return this.createClaimObservable();
+  }
+  getMessageUpdates() {
+    this.socket.on('new-message', message => {
+      return this.messageObserver.next(message);
+    });
+    return this.createMessageObservable();
   }
   joinRoom(id) {
     this.socket = io('http://localhost:8000/');
@@ -27,9 +34,14 @@ export class SocketService {
   leaveRoom(){
     this.socket.emit('leave-room');
   }
+  sendMessage(message){
+    this.socket.emit('sending-message', message);
+  }
 
-
-  createObservable() {
-    return new Observable(observer => this.observer = observer);
+  createClaimObservable() {
+    return new Observable(observer => this.claimObserver = observer);
+  }
+  createMessageObservable() {
+    return new Observable(observer => this.messageObserver = observer);
   }
 }

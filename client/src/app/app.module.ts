@@ -19,6 +19,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { MapListComponent } from './map-list/map-list.component';
 import { MapViewComponent } from './map-view/map-view.component';
 import { NewMapComponent } from './new-map/new-map.component';
+import { ChatboxComponent } from './chatbox/chatbox.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { NewMapComponent } from './new-map/new-map.component';
     UserListComponent,
     MapListComponent,
     MapViewComponent,
-    NewMapComponent
+    NewMapComponent,
+    ChatboxComponent
   ],
   imports: [
     BrowserModule,

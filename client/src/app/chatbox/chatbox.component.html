@@ -1,0 +1,11 @@
+<div class="chat-window">
+    <div class="chat-box">
+        <div class="message-box" *ngFor="let message of messages">
+            <p *ngIf="message.user">{{message.user.username}}: {{message.body}}</p>
+        </div>
+    </div>
+    <form autocomplete="off" (submit)="sendMessage()">
+        <input type="text" name="messageBox" id="messageInput" [(ngModel)]="message.body">
+        <input class="btn" type="submit" value="Send">
+    </form>
+</div>
