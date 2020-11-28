@@ -19,7 +19,7 @@ export class SocketService {
   }
   joinRoom(id) {
     this.socket = io('http://localhost:8000/');
-    this.socket.emit('join_room', id);
+    this.socket.emit('join-room', id);
     // this.socket.on('joined', _=> {
     //   console.log('room joined');
     // });

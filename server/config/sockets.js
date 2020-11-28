@@ -2,7 +2,7 @@ module.exports = server => {
     const io = require('socket.io')(server);
     io.on('connection', (socket) => {
         console.log('connected');
-        socket.on('join_room', id => {
+        socket.on('join-room', id => {
             socket.join(id);
             // io.to(id).emit('joined');
         });
