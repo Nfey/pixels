@@ -19,6 +19,7 @@ module.exports = (app, server) => {
 
     app.post('/api/messages', (req, res) => messages.create(req, res));
     app.get('/api/messages', (req, res) => messages.getAll(req, res));
+    app.get('/api/maps/:id/messages', (req, res) => messages.getMapMessages(req, res));
 
     app.get('/api/maps', users.authenticateToken, (req, res) => maps.getAll(req, res));
     app.get('/api/maps/:id', users.authenticateToken, (req, res) => maps.getOne(req, res));

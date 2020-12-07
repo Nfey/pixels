@@ -39,7 +39,6 @@ export class ApiService {
     return this._http.put(`/api/maps/${map._id}`, map);
   }
   createPixel(pixel){
-    console.log('in create pixel');
     return this._http.post('/api/pixels', pixel);
   }
   claimPixel(pixel){
@@ -48,8 +47,8 @@ export class ApiService {
   sendMessage(message){
     return this._http.post(`/api/messages`, message);
   }
-  getMessages(){
-    return this._http.get(`/api/messages`);
+  getMapMessages(id){
+    return this._http.get(`/api/maps/${id}/messages`);
   }
   
 }

@@ -6,6 +6,13 @@ module.exports = io => {
                 .then(messages => res.json(messages))
                 .catch(e => res.status(422).json(e));
         },
+        getMapMessages: (req, res) => {
+            Message.find({ map: req.params.id }).populate('user')
+                .then(messages => {
+                    res.json(messages);
+                })
+                .catch(e => res.status(422).json(e));
+        },
         getOne: (req, res) => {
             Message.findById(req.params.id)
                 .then(message => res.json(message))
@@ -14,7 +21,7 @@ module.exports = io => {
         create: (req, res) => {
             Message.create(req.body)
                 .then(message => {
-                    message.populate('user').execPopulate().then(_=> io.emit('new-message', message));
+                    message.populate('user').execPopulate().then(_ => io.to(String(message.map)).emit('new-message', message));
                     res.json(message);
                 })
                 .catch(e => res.status(422).json(e));
