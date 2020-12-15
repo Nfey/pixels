@@ -15,6 +15,7 @@ var PixelSchema = new mongoose.Schema({
     heat: { type: Number, default: 0 },
     effect: { type: String, default: "none" },
     strength: { type: Number, default: 1 },
+    attackers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 }, { timestamps: true });
 

@@ -11,6 +11,11 @@ module.exports = {
             .then(map => res.json(map))
             .catch(e => res.status(422).json(e));
     },
+    // getCustomersWithThisOneVerySpecificAddress: (req, res) => {
+    //     Customer.find({ address: "Park Lane 38" })
+    //         .then(customer => console.log(customer))
+    //         .catch(error => console.error(error));
+    // },
     create: (req, res) => {
         Map.create(req.body)
             .then(map => {
@@ -18,8 +23,8 @@ module.exports = {
                     for (let x = 0; x < map.width; x++) {
                         Pixel.create({ map_pos: { map: map._id, x: x, y: y } })
                             .then(pixel => {
-                                Map.findByIdAndUpdate(map._id, {$push: {pixels: pixel}})
-                                    .then(map => {})
+                                Map.findByIdAndUpdate(map._id, { $push: { pixels: pixel } })
+                                    .then(map => { })
                                     .catch(e => console.log(e));
                             })
                             .catch(e => console.log(e));

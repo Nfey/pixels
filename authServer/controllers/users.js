@@ -20,6 +20,7 @@ module.exports = {
     register: (req, res) => {
         if (req.body.password.length >= 6) {
             const userBlueprint = { firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, username: req.body.username };
+            console.log(userBlueprint);
             User.create(userBlueprint)
                 .then(user => {
                     user.hashPassword(req.body.password)
