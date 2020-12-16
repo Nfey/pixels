@@ -26,7 +26,6 @@ export class ChatboxComponent implements OnInit {
       })
     );
     mapMessages$.subscribe(messages => {
-      console.log(messages);
       this.messages = messages;
       //clunky, fix later
       setTimeout(() => {
