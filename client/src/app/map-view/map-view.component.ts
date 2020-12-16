@@ -38,17 +38,23 @@ export class MapViewComponent implements OnInit, OnDestroy {
           // console.log(this.pixelGrid);
         });
         const claimUpdate$ = this._sockets.getClaimUpdates();
-        this.claimUpdateSubscription = claimUpdate$.subscribe(pixel => {
-          console.log(pixel);
-          this.pixelGrid[pixel['map_pos'].y][pixel['map_pos'].x] = pixel;
-        });
+        this.claimUpdateSubscription = claimUpdate$.subscribe(
+          pixel => {
+            console.log(pixel);
+            this.pixelGrid[pixel['map_pos'].y][pixel['map_pos'].x] = pixel;
+          },
+          error => {
+            // console.log(error);
+          }
+        );
       });
     });
   }
   claimPixel(pixel) {
-    pixel.color = this.color;
-    delete pixel.hover;
-    this._api.claimPixel(pixel).subscribe();
+    var pixelCopy = Object.assign({}, pixel);
+    pixelCopy.color = this.color;
+    delete pixelCopy.hover;
+    this._api.claimPixel(pixelCopy).subscribe();
   }
   setColor(color) {
     this.color = color;
