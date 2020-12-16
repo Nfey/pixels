@@ -26,7 +26,10 @@ var UserSchema = new mongoose.Schema({
     },
     passwordHash: {
         type: String,
-    }
+    },
+    pixels: [],
+    maps: [],
+    colors: []
 });
 UserSchema.methods.hashPassword = function (password) {
     return bcrypt.hash(password, 10);

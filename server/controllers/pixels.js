@@ -49,25 +49,46 @@ module.exports = io => {
         claim: (req, res) => {
             User.findById(req.user._id)
                 .then(user => {
-                    Pixel.findById(req.body._id)
+                    Pixel.findById(req.body._id) //req.body._id is the id of the pixel clicked on
                         .then(pixel => {
-                            pixel.color = req.body.color;
-                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false })
-                                .then(previousOwner => {
-                                    pixel.owner = user._id;
-                                    pixel.save();
-                                    if (!user.pixels.includes(pixel._id)) {
-                                        user.pixels.push(pixel);
-                                        user.save();
-                                    }
-                                    io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
-                                    res.json(pixel);
-                                })
-                                .catch(e => res.status(420).json(e));
+                            //check if pixel is already owned by user claiming it
+                            if(isOrthogonal(user, pixel) || user.pixels.filter(userPixel => userPixel.map_pos.map == pixel.map_pos.map).length == 0){
+                                pixel.color = req.body.color;
+                                User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false }) 
+                                    .then(previousOwner => {
+
+                                        pixel.owner = user._id;
+                                        pixel.save();
+                                        if (!user.pixels.includes(pixel._id)) {
+                                            user.pixels.push(pixel);
+                                            user.save();
+                                        }
+                                        io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
+                                        res.json(pixel);
+                                    })
+                                    .catch(e => res.status(420).json(e));
+                            }
+                            else{
+                                res.status(418).send("ERROR: Pixel placed is not adjacent");
+                            }
                         })
                         .catch(e => res.status(422).json(e));
                 })
-                .catch(e => res.json(e));
+                .catch(e => res.json(e)); 
         }
     }
+}
+
+//returns true or false, true if adjacent, false if not adjacent
+//receives pixel clicked on
+//checks each pixel user owns (within this map). When an adjacent pixel is found, return true
+//if we reach end of pixels user owns, return false
+
+function isOrthogonal(myUser, myPixel){
+    var pixelList = myUser.pixels.filter(pixel => pixel.map_pos.map == myPixel.map_pos.map)
+    pixelList.forEach(pixel => {
+        if ((pixel.map_pos.x - myPixel.map_pos.x >= -1 && pixel.map_pos.x - myPixel.map_pos.x <= 1) && (pixel.map_pos.y - myPixel.map_pos.y >= -1 && pixel.map_pos.y - myPixel.map_pos.y <= 1))
+            return true;
+    })
+    return false;
 }

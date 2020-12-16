@@ -19,7 +19,7 @@ var UserSchema = new mongoose.Schema({
     passwordHash: {
         type: String,
     },
-    pixels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pixel", unique: true }],
+    pixels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pixel"}],
     maps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Map" }],
     colors: [{ type: String }]
 }, { timestamps: true });
