@@ -9,6 +9,8 @@ module.exports = (app, server) => {
     app.get('/api/users', users.authenticateToken, (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));
     app.get('/api/user', users.authenticateToken, (req, res) => users.getUserByTokenId(req, res));
+    app.post('/api/user/addCoins', (req, res) => users.addCoins(req, res));
+    app.post('/api/user/subCoins', (req, res) => users.subCoins(req, res));
 
     app.get('/api/pixels', users.authenticateToken, (req, res) => pixels.getAll(req, res));
     app.get('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.getOne(req, res));

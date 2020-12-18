@@ -19,6 +19,10 @@ var UserSchema = new mongoose.Schema({
     passwordHash: {
         type: String,
     },
+    coins: {
+        type: Number,
+        default: 0
+    },
     pixels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pixel"}],
     maps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Map" }],
     colors: [{ type: String }]
