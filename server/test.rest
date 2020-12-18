@@ -1,0 +1,9 @@
+POST http://localhost:8000/api/user/subCoins HTTP/1.1
+content-type: application/json
+
+{
+    "userId": "5fd9653f258cd52204434ec5",
+    "coins": 50
+}
+###
+GET http://localhost:8000/api/users 

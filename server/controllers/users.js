@@ -30,6 +30,33 @@ module.exports = {
             next();
         });
     },
+    addCoins: (req, res) => {
+        User.findById(req.body.userId)
+            .then(user => {
+
+                user.coins += req.body.coins
+                user.save()
+                res.json(user)
+
+            })
+            .catch(e => res.json({error : "ERROR: Failed to add coins"}))
+    },
+    subCoins: (req, res) => {
+        User.findById(req.body.userId)
+            .then(user => {
+                if (user.coins-req.body.coins >= 0){
+                    user.coins -= req.body.coins
+                    user.save()
+                    res.json(user)
+                }
+                else{
+                    user.coins = 0
+                    user.save()
+                    res.json({user : user, note : "Note: your coinage has reached zero"})
+                }
+            })
+            .catch(e => res.json({error : "ERROR: Failed to subtract coins"}))
+    },
     deleteUser: (req, res) => {
         User.findByIdAndRemove(req.params.id, { useFindAndModify: false })
             .then(result => res.json(result))
