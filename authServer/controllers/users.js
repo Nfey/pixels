@@ -20,7 +20,6 @@ module.exports = {
     register: (req, res) => {
         if (req.body.password.length >= 6) {
             const userBlueprint = { firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, username: req.body.username };
-            console.log(userBlueprint);
             User.create(userBlueprint)
                 .then(user => {
                     user.hashPassword(req.body.password)
@@ -42,10 +41,8 @@ module.exports = {
     login: (req, res) => {
         User.findOne({ email: req.body.email })
             .then(user => {
-                console.log("success 1")
                 user.validatePassword(req.body.password)
                     .then(userHasValidPassword => {
-                        console.log("success 2");
                         if (userHasValidPassword) {
                             var accessToken = generateAccessToken(user);
                             RefreshToken.findOne({ userId: user._id })
