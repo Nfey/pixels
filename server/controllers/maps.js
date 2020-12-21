@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const Map = require('../models/map').model;
-const User = require('../models/user');
 const Pixel = require('../models/pixel').model;
 module.exports = {
     mapUserLink: (req,res) => {
