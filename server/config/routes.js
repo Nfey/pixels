@@ -1,6 +1,6 @@
 const path = require('path');
 const users = require('../controllers/users');
-const maps = require('../controllers/maps.js');
+const maps = require('../controllers/maps');
 module.exports = (app, server) => {
     const io = require('./sockets')(server);
     const pixels = require('../controllers/pixels')(io);
@@ -23,6 +23,7 @@ module.exports = (app, server) => {
     app.get('/api/messages', (req, res) => messages.getAll(req, res));
     app.get('/api/maps/:id/messages', (req, res) => messages.getMapMessages(req, res));
 
+    app.get('/api/maps/:id/join', users.authenticateToken, (req, res) => maps.join(req, res));
     app.get('/api/maps', users.authenticateToken, (req, res) => maps.getAll(req, res));
     app.get('/api/maps/:id', users.authenticateToken, (req, res) => maps.getOne(req, res));
     app.get('/api/maps/:id/pixels', users.authenticateToken, (req, res) => pixels.getByMap(req, res));

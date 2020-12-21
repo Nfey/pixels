@@ -11,4 +11,3 @@ module.exports = {
     schema: MapSchema,
     model: Map
 }
-// create, find, findById, etc

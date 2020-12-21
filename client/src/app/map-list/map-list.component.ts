@@ -6,7 +6,7 @@ import { ApiService } from '../api.service';
   styleUrls: ['./map-list.component.css']
 })
 export class MapListComponent implements OnInit {
-  maps;
+  maps: Object;
   constructor(private _api: ApiService) { }
 
   ngOnInit(): void {
