@@ -31,7 +31,7 @@ module.exports = {
         });
     },
     addCoins: (req, res) => {
-        User.findById(req.body.userId)
+        User.findById(req.params.userId)
             .then(user => {
 
                 user.coins += req.body.coins
@@ -42,7 +42,7 @@ module.exports = {
             .catch(e => res.json({error : "ERROR: Failed to add coins"}))
     },
     subCoins: (req, res) => {
-        User.findById(req.body.userId)
+        User.findById(req.params.userId)
             .then(user => {
                 if (user.coins-req.body.coins >= 0){
                     user.coins -= req.body.coins

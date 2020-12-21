@@ -7,3 +7,15 @@ content-type: application/json
 }
 ###
 GET http://localhost:8000/api/users 
+###
+POST http://localhost:8000/api/maps/users HTTP/1.1
+content-type: application/json
+ 
+ 
+{
+    "userId": "5fd9653f258cd52204434ec5",
+    "mapId": "5fd965568411ba5b6818f5b4"
+}
+
+###
+GET http://localhost:8000/api/maps
