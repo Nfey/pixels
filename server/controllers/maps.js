@@ -2,13 +2,13 @@ const User = require('../models/user');
 const Map = require('../models/map').model;
 const Pixel = require('../models/pixel').model;
 module.exports = {
-    mapUserLink: (req,res) => {
-        var userPromise = User.findOneAndUpdate({_id : req.body.userId}, {$addToSet : {maps : req.body.mapId}},{new : true})      
-        var mapPromise = Map.findOneAndUpdate({_id : req.body.mapId}, {$addToSet : {users : req.body.userId}},{new : true})
+    mapUserLink: (req, res) => {
+        var userPromise = User.findOneAndUpdate({ _id: req.body.userId }, { $addToSet: { maps: req.body.mapId } }, { new: true })
+        var mapPromise = Map.findOneAndUpdate({ _id: req.body.mapId }, { $addToSet: { users: req.body.userId } }, { new: true })
         Promise.all([userPromise, mapPromise])
             .then(values => {
-                res.json({user : values[0], map : values[1]})
-            }) 
+                res.json({ user: values[0], map: values[1] })
+            })
             .catch(e => res.status(422).json(e))
     },
     getAll: (req, res) => {
