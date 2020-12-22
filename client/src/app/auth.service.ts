@@ -69,4 +69,7 @@ export class AuthService {
   isLoggedOut() {
     return !this.isLoggedIn();
   }
+  getUserObject() {
+    return this._http.get('/api/user');
+  }
 }

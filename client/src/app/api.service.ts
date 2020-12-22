@@ -50,5 +50,8 @@ export class ApiService {
   getMapMessages(id){
     return this._http.get(`/api/maps/${id}/messages`);
   }
+  joinMap(map){
+    return this._http.get(`/api/maps/${map._id}/join`);
+  }
   
 }

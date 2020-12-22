@@ -11,7 +11,7 @@
             <td>{{ map.theme }}</td>
             <td>{{ map.height }}</td>
             <td>{{ map.width }}</td>
-            <td><a [routerLink]="['/maps', map._id]" role="button" class="btn btn-primary">Go to map</a><button class="btn btn-danger" (click)="removeMap(map)">Delete</button></td>
+            <td><a *ngIf="user && map.users.includes(user['_id'])" [routerLink]="['/maps', map._id]" role="button" class="btn btn-primary">Go to map</a><button (click)="joinMap(map)" class="btn btn-warning" *ngIf="user && !map.users.includes(user['_id'])">Join</button><button class="btn btn-danger" (click)="removeMap(map)">Delete</button></td>
         </tr>
     </tbody>
 </table>

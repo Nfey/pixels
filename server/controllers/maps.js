@@ -17,7 +17,7 @@ module.exports = {
             .catch(e => res.status(422).json(e));
     },
     getOne: (req, res) => {
-        Map.findById(req.params.id).populate("pixels")
+        Map.findById(req.params.id).populate("pixels").populate("users")
             .then(map => res.json(map))
             .catch(e => res.status(422).json(e));
     },
@@ -45,17 +45,11 @@ module.exports = {
             .catch(e => res.status(422).json(e));
     },
     join: (req, res) => {
-        Map.findById(req.params.id)
-            .then(map => {
-                User.findById(req.user._id)
-                    .then(user => {
-                        user.maps.push(map._id);
-                        user.save();
-                        map.users.push(user._id);
-                        map.save();
-                        res.json()
-                    })
-                    .catch(e => res.status(420).json(e))
+        var userPromise = User.findOneAndUpdate({ _id: req.user._id }, { $addToSet: { maps: req.params.id } }, { new: true })
+        var mapPromise = Map.findOneAndUpdate({ _id: req.params.id }, { $addToSet: { users: req.user._id } }, { new: true })
+        Promise.all([userPromise, mapPromise])
+            .then(values => {
+                res.json({user: values[0], map: values[1]});
             })
             .catch(e => res.status(422).json(e))
     },
