@@ -1,11 +1,22 @@
 <div class="map-info" *ngIf="map">
     <h2>Theme: {{map.theme}}</h2>
     <div class="pixel-row" *ngFor="let row of pixelGrid">
-        <div class="pixel" *ngFor="let pixel of row" (click)="claimPixel(pixel)" (mouseover)="pixel.hover=true" (mouseout)="pixel.hover=false" [style.background-color]="pixel.color" [ngStyle]="{ backgroundColor: pixel.hover==true  ? color : pixel.color }">
+        <div class="pixel" *ngFor="let pixel of row" (click)="claimPixel(pixel)" (mouseover)="pixel.hover=true"
+            (mouseout)="pixel.hover=false" [style.background-color]="pixel.color"
+            [ngStyle]="{ backgroundColor: pixel.hover==true  ? color : pixel.color}"
+            [ngClass]="{'pixel-highlighted': selectedUser && pixel.owner==selectedUser._id, 'pixel-lowlighted': selectedUser && pixel.owner!=selectedUser._id}">
         </div>
     </div>
-    <br>
-    <button *ngFor="let color of colors" (click)="setColor(color)" class="btn"
-        [style.background-color]="color">{{color}}</button>
+</div>
+<br>
+<button *ngFor="let color of colors" (click)="setColor(color)" class="btn"
+    [style.background-color]="color">{{color}}</button>
+<div *ngIf="map" class="user-button-area">
+    <div *ngFor="let user of map.users" class="user-button-container">
+        <button (click)="highlightByUser(user)" class="btn btn-warning">{{ user.username }}</button>
+    </div>
+    <div class="user-button-container">
+        <button (click)="deselectPixels()" class="btn btn-danger">Deselect</button>
+    </div>
 </div>
 <app-chatbox></app-chatbox>

@@ -10,3 +10,9 @@
 .pixel:hover {
     filter: brightness(85%);
 }
+.pixel-highlighted {
+    filter: brightness(110%);
+}
+.pixel-lowlighted {
+    filter: brightness(35%)
+}

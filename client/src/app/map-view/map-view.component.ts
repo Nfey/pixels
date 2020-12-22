@@ -17,10 +17,11 @@ export class MapViewComponent implements OnInit, OnDestroy {
   newPixel: { map_pos: { map: any, x: Number, y: Number }, color: String, heat: Number, effect: String, strength: Number } = { map_pos: { map: 0, x: 0, y: 0 }, color: "white", heat: 0, effect: "none", strength: 1 }
   pixelGrid = [];
   claimUpdateSubscription;
+  selectedUser;
   constructor(private _api: ApiService, private _route: ActivatedRoute, private _sockets: SocketService) { }
 
   ngOnInit(): void {
-    //TODO: Clean up this mess of subscriptions
+    // TODO: Clean up this mess of subscriptions
     this._route.params.subscribe(params => {
       // TODO: Display 404 message if map does not exist in database
       this._sockets.joinRoom(params.id);
@@ -64,5 +65,11 @@ export class MapViewComponent implements OnInit, OnDestroy {
       this.claimUpdateSubscription.unsubscribe();
       this._sockets.leaveRoom();
     }
+  }
+  highlightByUser(user){
+    this.selectedUser = user;
+  }
+  deselectPixels(){
+    this.selectedUser = undefined;
   }
 }
