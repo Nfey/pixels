@@ -1,7 +1,9 @@
 const path = require('path');
 const users = require('../controllers/users');
 const maps = require('../controllers/maps');
-const map = require('../models/map');
+const queues = require('../controllers/queues');
+
+
 module.exports = (app, server) => {
     const io = require('./sockets')(server);
     const pixels = require('../controllers/pixels')(io);
@@ -19,6 +21,9 @@ module.exports = (app, server) => {
     app.put('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.update(req, res));
     app.delete('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.delete(req, res));
     app.post('/api/pixels/claim', users.authenticateToken, (req, res) => pixels.claim(req, res));
+
+    app.get('/api/queues/:id/join', users.authenticateToken, (req,res) => queues.joinQueue(req,res));
+    app.get('/api/queues/:id/leave', users.authenticateToken, (req,res) => queues.leaveQueue(req,res));
 
     app.post('/api/messages', (req, res) => messages.create(req, res));
     app.get('/api/messages', (req, res) => messages.getAll(req, res));
