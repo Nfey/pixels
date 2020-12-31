@@ -1,13 +1,16 @@
 const path = require('path');
 const users = require('../controllers/users');
 const maps = require('../controllers/maps');
-const queues = require('../controllers/queues');
+
 
 
 module.exports = (app, server) => {
-    const io = require('./sockets')(server);
+    const sockets = require('./sockets')(server);
+    const io = sockets.io;
+    const socketList = sockets.socketList;
     const pixels = require('../controllers/pixels')(io);
     const messages = require('../controllers/messages')(io);
+    const queues = require('../controllers/queues')(io, socketList);
 
     app.get('/api/users', (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));
@@ -24,6 +27,8 @@ module.exports = (app, server) => {
 
     app.get('/api/queues/:id/join', users.authenticateToken, (req,res) => queues.joinQueue(req,res));
     app.get('/api/queues/:id/leave', users.authenticateToken, (req,res) => queues.leaveQueue(req,res));
+    app.get('/api/queues', users.authenticateToken, (req, res) => queues.getAll(req, res));
+    app.post('/api/queues', users.authenticateToken, (req, res) => queues.createQueue(req, res));
 
     app.post('/api/messages', (req, res) => messages.create(req, res));
     app.get('/api/messages', (req, res) => messages.getAll(req, res));

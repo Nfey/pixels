@@ -53,5 +53,11 @@ export class ApiService {
   joinMap(map){
     return this._http.get(`/api/maps/${map._id}/join`);
   }
+  joinQueue(id){
+    return this._http.get(`/api/queues/${id}/join`);
+  }
+  getQueues(){
+    return this._http.get('/api/queues');
+  }
   
 }

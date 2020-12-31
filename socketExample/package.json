@@ -1,0 +1,17 @@
+{
+  "name": "socketExample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "clientside.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.0.4",
+    "socket.io-client": "^3.0.4"
+  }
+}

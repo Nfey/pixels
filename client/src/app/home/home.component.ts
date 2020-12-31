@@ -9,6 +9,7 @@ import { ApiService } from '../api.service';
 })
 export class HomeComponent implements OnInit {
   user;
+  queues;
   isLoggedIn: Boolean;
   constructor(private _auth: AuthService, private _api: ApiService) { }
 
@@ -19,5 +20,9 @@ export class HomeComponent implements OnInit {
         this.user = user;
       });
     }
+    this._api.getQueues().subscribe(queues => this.queues = queues)
+  }
+  joinQueue(id){
+    this._api.joinQueue(id).subscribe(queueInfo => console.log(queueInfo));
   }
 }

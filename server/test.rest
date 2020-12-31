@@ -19,3 +19,31 @@ content-type: application/json
 
 ###
 GET http://localhost:8000/api/maps
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFkOWU5ZjE0ZWNkYTUwNDZmOWE1ZjYiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoid2F0dHl3YWh3YWgiLCJpYXQiOjE2MDk0MTM4MjUsImV4cCI6MTYwOTQyMTAyNX0.ElBeVl3AC7jRpNoA5QeK9yDAYJ6EQt2VGBIsQ_rYvFY
+
+###
+
+POST http://localhost:8000/api/queues
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFkOWU5ZjE0ZWNkYTUwNDZmOWE1ZjYiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoid2F0dHl3YWh3YWgiLCJpYXQiOjE2MDk0MTM4MjUsImV4cCI6MTYwOTQyMTAyNX0.ElBeVl3AC7jRpNoA5QeK9yDAYJ6EQt2VGBIsQ_rYvFY
+
+{
+}
+
+###
+
+GET http://localhost:8000/api/queues
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFkOWU5ZjE0ZWNkYTUwNDZmOWE1ZjYiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoid2F0dHl3YWh3YWgiLCJpYXQiOjE2MDk0MTM4MjUsImV4cCI6MTYwOTQyMTAyNX0.ElBeVl3AC7jRpNoA5QeK9yDAYJ6EQt2VGBIsQ_rYvFY
+###
+POST http://localhost:4000/login
+content-type: application/json
+
+{
+    "email": "nfey1@me.com",
+    "password": "N132435fCf!"
+}
+
+###
+
+GET http://localhost:8000/api/queues/5fedb5423bbdc913c03717bc/join
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFkOWU5ZjE0ZWNkYTUwNDZmOWE1ZjYiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoid2F0dHl3YWh3YWgiLCJpYXQiOjE2MDk0MTM4MjUsImV4cCI6MTYwOTQyMTAyNX0.ElBeVl3AC7jRpNoA5QeK9yDAYJ6EQt2VGBIsQ_rYvFY

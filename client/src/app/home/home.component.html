@@ -4,4 +4,6 @@
 </div>
 <div *ngIf="isLoggedIn && this.user">
     <h1>Welcome, {{user.username}}!</h1>
+
+    <button *ngFor="let queue of queues" class="btn btn-success" (click)="joinQueue(queue._id)">Queue up</button>
 </div>
