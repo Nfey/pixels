@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, Observer } from 'rxjs';
 import { io } from 'socket.io-client';
 
@@ -10,31 +11,38 @@ export class SocketService {
   claimObserver: Observer<any>;
   messageObserver: Observer<any>;
   socket;
-  constructor() { }
+  constructor(private _router: Router) { }
 
   getClaimUpdates() {
-    this.socket.on('pixelClaimed', pixel => {
-      return this.claimObserver.next(pixel);
-    });
     return this.createClaimObservable();
   }
   getMessageUpdates() {
+    return this.createMessageObservable();
+  }
+  connect() {
+    const accessToken = localStorage.getItem('access_token');
+    this.socket = io('http://localhost:8000/', { query: "token=" + accessToken});
+    this.socket.on('pixelClaimed', pixel => {
+      return this.claimObserver.next(pixel);
+    });
     this.socket.on('new-message', message => {
       return this.messageObserver.next(message);
     });
-    return this.createMessageObservable();
+    this.socket.on('redirectToMap', map => {
+      console.log('redirect');
+      this._router.navigate(['/maps', map._id]);
+    })
   }
   joinRoom(id) {
-    this.socket = io('http://localhost:8000/');
     this.socket.emit('join-room', id);
     // this.socket.on('joined', _=> {
     //   console.log('room joined');
     // });
   }
-  leaveRoom(){
+  leaveRoom() {
     this.socket.emit('leave-room');
   }
-  sendMessage(message){
+  sendMessage(message) {
     this.socket.emit('sending-message', message);
   }
 
