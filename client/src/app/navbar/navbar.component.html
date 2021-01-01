@@ -20,6 +20,9 @@
                 <a class="nav-link" [routerLink]="['/users']">User List</a>
             </li>
             <li *ngIf="this._auth.isLoggedIn()" class="nav-item">
+                <a class="nav-link" [routerLink]="['/games']">Active Matches</a>
+            </li>
+            <li *ngIf="this._auth.isLoggedIn()" class="nav-item">
                 <a class="nav-link" (click)="logout()">Log Out</a>
             </li>
         </ul>

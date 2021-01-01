@@ -20,6 +20,7 @@ import { MapListComponent } from './map-list/map-list.component';
 import { MapViewComponent } from './map-view/map-view.component';
 import { NewMapComponent } from './new-map/new-map.component';
 import { ChatboxComponent } from './chatbox/chatbox.component';
+import { ActiveMatchesComponent } from './active-matches/active-matches.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ChatboxComponent } from './chatbox/chatbox.component';
     MapListComponent,
     MapViewComponent,
     NewMapComponent,
-    ChatboxComponent
+    ChatboxComponent,
+    ActiveMatchesComponent
   ],
   imports: [
     BrowserModule,

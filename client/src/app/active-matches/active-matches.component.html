@@ -1,0 +1,17 @@
+<h1>Active matches</h1>
+<table *ngIf="maps" class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <th>Theme</th>
+        <th>Height</th>
+        <th>Width</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let map of maps">
+            <td>{{ map.theme }}</td>
+            <td>{{ map.height }}</td>
+            <td>{{ map.width }}</td>
+            <td><a [routerLink]="['/maps', map._id]" role="button" class="btn btn-primary">Go to map</a></td>
+        </tr>
+    </tbody>
+</table>
