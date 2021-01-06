@@ -9,6 +9,7 @@ module.exports = (io, socketList) => {
         return Map.create({ theme: "TestTheme", height: 5, width: 5, users: myQueue.users.splice(0, 2) })
             .then(map => {
                 myQueue.save()
+                //populates map with new blank pixels
                 for (let y = 0; y < map.height; y++) {
                     for (let x = 0; x < map.width; x++) {
                         Pixel.create({ map_pos: { map: map._id, x: x, y: y } })
@@ -25,20 +26,18 @@ module.exports = (io, socketList) => {
                 map.users.forEach(userId => {
                     let promise = User.findByIdAndUpdate(userId, { $addToSet: { maps: map._id } }, { new: true });
                     promises.push(promise);
-                    //each user joins io room with associated map's id
-                    // promise.then(user => {
-                    //     socketList[user._id].join(map._id);
-                    //     console.log(socketList[user._id]);
-                    // })
-                    //     .catch(e => e);
                 });
-                //after each user joins io room, send redirect message to all clients added to io room
+
                 return Promise.all(promises)
                     .then(users => {
+                        //each user joins io room with associated map's id
                         users.forEach(user => {
                             socketList[user._id].join(String(map._id));
                         })
                         console.log('redirecting')
+                        console.log(map._id);
+                        console.log(typeof map._id);
+                        //after each user joins io room, send redirect message to all clients added to io room
                         io.to(String(map._id)).emit("redirectToMap", map);
                         console.log('redirected');
                         return map;
