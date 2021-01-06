@@ -111,3 +111,19 @@ function isAdjacent(myUser, myPixel) {
     })
     return isAdjacent;
 }
+
+function claimPixel(bodyMap, bodyPixel) {
+    // steal "claim" property from io
+}
+
+function shiftTurnOrder(users) {
+    // rotates the user array:
+    //     1. Set user at index 0 of array equal to a placeholder
+    //     2. Starting at index 0, set user at index x equal to that of following index (loop for array length -1, resulting in duplicate users at last two indexes)
+    //     3. Set user at end of array equal to placeholder from (1.)
+}
+
+function invertTurnOrder(users) {
+    // lol just use .inverse()
+    // https://www.javatpoint.com/javascript-array-reverse-method
+}
