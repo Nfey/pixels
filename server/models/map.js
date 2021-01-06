@@ -5,7 +5,8 @@ var MapSchema = new mongoose.Schema({
     width: { type: Number, required: true, default: 10 },
     pixels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pixel" }],
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    phase: { type: String, default: "turn" }
+    phase: { type: String, default: "turn" },
+
 }, { timestamps: true });
 const Map = mongoose.model("Map", MapSchema);
 module.exports = {

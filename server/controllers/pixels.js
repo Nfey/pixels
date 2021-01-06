@@ -72,6 +72,27 @@ module.exports = io => {
                         .catch(e => res.status(422).json(e));
                 })
                 .catch(e => res.json(e));
+        },
+        takeInitialTurn: (req, res) => {
+            const pixelFromBody = req.body.pixel;
+            const mapFromBody = req.body.map;
+            const userId = String(req.user._id);
+            const activePlayerId = String(mapFromBody.users[0]._id);
+            if (mapFromBody.phase == "turn" && userId == activePlayerId) {
+                var pixelClaimedPromise = claimpixel(mapFromBody, pixelFromBody);
+                var turnOrderShiftedPromise = shiftTurnOrder(mapFromBody.users);
+                Promise.all([pixelClaimedPromise, turnOrderShiftedPromise])
+                    .then(updatedMap => {
+                        var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length
+                        if (numClaimedPixels == updatedMap.users.length) {
+                            invertTurnOrder(updatedMap.users);
+                        }
+                        else if (numClaimedPixels == updatedMap.users.length * 2) {
+                            map.phase = "tick"
+                        }
+                        io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
+                    })
+            }
         }
     }
 }
