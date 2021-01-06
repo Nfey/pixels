@@ -62,5 +62,13 @@ module.exports = {
         Map.findByIdAndRemove(req.params.id, { useFindAndModify: false })
             .then(map => res.json(map))
             .catch(e => res.status(422).json(e));
-    }
+    },
+
+}
+function startTickLoop() {
+    //every 5 minutes
+    tick()
+}
+function tick() {
+    
 }
