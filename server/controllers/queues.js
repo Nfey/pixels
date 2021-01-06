@@ -6,7 +6,7 @@ module.exports = (io, socketList) => {
     function mapSetup(myQueue) {
         console.log('setting up map');
         //creates new map with first 2 users in queue, removes users from queue
-        return Map.create({ theme: "TestTheme", height: 5, width: 5, users: myQueue.users.splice(0, 2) })
+        return Map.create({ theme: randomTheme(), height: myQueue.mapHeightLength, width: myQueue.mapHeightLength, users: myQueue.users.splice(0, myQueue.playerCapacity) })
             .then(map => {
                 myQueue.save()
                 //populates map with new blank pixels
@@ -96,3 +96,13 @@ module.exports = (io, socketList) => {
     }
 }
 
+function randomTheme(){
+    var themes = [
+        "Cars",
+        "Christmas",
+        "Kwanza"
+    ]
+    var randInt = Math.floor(Math.random() * themes.length)
+    return themes[randInt]
+
+}
