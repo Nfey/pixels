@@ -8,6 +8,8 @@ module.exports = server => {
     }));
 
     var socketList = {}
+
+
     io.on('connection', (socket) => {
         console.log('connected', socket.decoded_token._id);
         socketList[socket.decoded_token._id] = socket;
@@ -23,6 +25,8 @@ module.exports = server => {
             console.log('disconnected', socketList);
         })
     });
+
+    
 
     return {
         io: io,
