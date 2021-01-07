@@ -79,19 +79,20 @@ module.exports = io => {
             const userId = String(req.user._id);
             const activePlayerId = String(mapFromBody.users[0]._id);
             if (mapFromBody.phase == "turn" && userId == activePlayerId) {
-                var pixelClaimedPromise = claimpixel(mapFromBody, pixelFromBody);
-                var turnOrderShiftedPromise = shiftTurnOrder(mapFromBody.users);
+                var pixelClaimedPromise = claimpixel(mapFromBody, pixelFromBody, userId);
+                var turnOrderShiftedPromise = shiftTurnOrder(mapFromBody);
                 Promise.all([pixelClaimedPromise, turnOrderShiftedPromise])
                     .then(updatedMap => {
                         var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length
                         if (numClaimedPixels == updatedMap.users.length) {
-                            invertTurnOrder(updatedMap.users);
+                            invertTurnOrder(mapFromBody);
                         }
                         else if (numClaimedPixels == updatedMap.users.length * 2) {
                             map.phase = "tick"
                         }
                         io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
                     })
+                    .catch()
             }
         }
     }
@@ -112,18 +113,45 @@ function isAdjacent(myUser, myPixel) {
     return isAdjacent;
 }
 
-function claimPixel(bodyMap, bodyPixel) {
+function claimPixel(bodyMap, bodyPixel, idUser) {
     // steal "claim" property from io
+    const promise = User.findById(idUser).populate("pixels")
+    promise.then(user => {
+        var listOfClaimedPixels = bodyMap.pixels.filter(pixel => pixel.owner)
+        var claimedPixelPositions = listOfClaimedPixels.map(pixel => pixel = pixel.map_pos)
+        var placingOnClaimedSpace = claimedPixelPositions.includes(bodyPixel.map_pos)
+        Pixel.findById(bodyPixel._id)
+            .then(pixel => {
+                if (!placingOnClaimedSpace) {
+                    pixel.color = bodyPixel.color;
+                    pixel.owner = idUser;
+                    pixel.save();
+                    user.pixels.push(pixel._id);
+                    user.save();
+                }
+            })
+    })
+    .catch(e => console.log(e));
+    return promise
 }
 
-function shiftTurnOrder(users) {
-    // rotates the user array:
-    //     1. Set user at index 0 of array equal to a placeholder
-    //     2. Starting at index 0, set user at index x equal to that of following index (loop for array length -1, resulting in duplicate users at last two indexes)
-    //     3. Set user at end of array equal to placeholder from (1.)
+function shiftTurnOrder(bodyMap) {
+    const promise = Map.findById(bodyMap._id)
+    promise.then(map => {
+        var finishedUser = map.users.shift()
+        map.users.push(finishedUser)
+        map.save()
+    })
+    .catch(e => console.log(e));
+    return promise
 }
 
-function invertTurnOrder(users) {
-    // lol just use .inverse()
-    // https://www.javatpoint.com/javascript-array-reverse-method
+function invertTurnOrder(bodyMap) {
+    const promise = Map.findById(bodyMap._id)
+    promise.then(map => {
+        map.users.reverse()
+        map.save()
+    })
+    .catch(e => console.log(e));
+    return promise
 }
