@@ -24,6 +24,8 @@ module.exports = (app, server) => {
     app.put('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.update(req, res));
     app.delete('/api/pixels/:id', users.authenticateToken, (req, res) => pixels.delete(req, res));
     app.post('/api/pixels/claim', users.authenticateToken, (req, res) => pixels.claim(req, res));
+    app.post('/api/pixels/takeInitialTurn', users.authenticateToken, (req, res) => pixels.takeInitialTurn(req, res));
+    app.post('/api/pixels/takeInitialTurnAsync', users.authenticateToken, (req, res) => pixels.takeInitialTurnAsync(req, res));
 
     app.get('/api/queues/:id/join', users.authenticateToken, (req,res) => queues.joinQueue(req,res));
     app.get('/api/queues/:id/leave', users.authenticateToken, (req,res) => queues.leaveQueue(req,res));

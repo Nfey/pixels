@@ -78,21 +78,64 @@ module.exports = io => {
             const mapFromBody = req.body.map;
             const userId = String(req.user._id);
             const activePlayerId = String(mapFromBody.users[0]._id);
+            //if 
             if (mapFromBody.phase == "turn" && userId == activePlayerId) {
-                var pixelClaimedPromise = claimpixel(mapFromBody, pixelFromBody, userId);
+                var pixelClaimedPromise = claimPixel(mapFromBody, pixelFromBody, userId);
                 var turnOrderShiftedPromise = shiftTurnOrder(mapFromBody);
-                Promise.all([pixelClaimedPromise, turnOrderShiftedPromise])
-                    .then(updatedMap => {
-                        var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length
-                        if (numClaimedPixels == updatedMap.users.length) {
-                            invertTurnOrder(mapFromBody);
-                        }
-                        else if (numClaimedPixels == updatedMap.users.length * 2) {
-                            map.phase = "tick"
-                        }
+                var oncePixelHasBeenClaimedAndTurnOrderHasBeenShifted = Promise.all([pixelClaimedPromise, turnOrderShiftedPromise]);
+                oncePixelHasBeenClaimedAndTurnOrderHasBeenShifted.then(values => {
+                    var user = values[0];
+                    var updatedMap = results[1];
+                    var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length;
+                    const eachPlayerHasPlacedOnePixel = numClaimedPixels == updatedMap.users.length;
+                    const eachPlayerHasPlacedTwoPixels = numClaimedPixels == updatedMap.users.length * 2;
+                    if (eachPlayerHasPlacedOnePixel) {
+                        var inversionPromise = invertTurnOrder(updatedMap);
+                        inversionPromise.then(invertedMap => {
+                            io.to(String(invertedMap._id)).emit("turn-is-over", invertedMap);
+                        }).catch(e => console.log(e));
+                    }
+                    else if (eachPlayerHasPlacedTwoPixels) {
+                        map.phase = "tick";
                         io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
-                    })
-                    .catch()
+                    }
+                    else {
+                        io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
+                    }
+
+                }).catch(e => console.log(e));
+            }
+        },
+        takeInitialTurnAsync: async (req, res) => {
+            try {
+                //variable declaration
+                const pixelFromBody = req.body.pixel;
+                const mapFromBody = req.body.map;
+                const userId = String(req.user._id);
+                const activePlayerId = String(mapFromBody.users[0]._id);
+                //checks if game is in turn phase & it is requesting player's turn
+                if (mapFromBody.phase == "turn" && userId == activePlayerId) {
+                    await claimPixel(mapFromBody, pixelFromBody, userId);
+                    await shiftTurnOrder(mapFromBody);
+
+                    var user = values[0];
+                    var updatedMap = results[1];
+                    var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length;
+                    const eachPlayerHasPlacedOnePixel = numClaimedPixels == updatedMap.users.length;
+                    const eachPlayerHasPlacedTwoPixels = numClaimedPixels == updatedMap.users.length * 2;
+
+                    if (eachPlayerHasPlacedOnePixel) {
+                        await invertTurnOrder(updatedMap);
+                    }
+                    else if (eachPlayerHasPlacedTwoPixels) {
+                        map.phase = "tick";
+                    }
+                    io.to(String(invertedMap._id)).emit("turn-is-over", invertedMap);
+                    res.json()
+                }
+            }
+            catch(e){
+                res.json(e);
             }
         }
     }
@@ -130,8 +173,7 @@ function claimPixel(bodyMap, bodyPixel, idUser) {
                     user.save();
                 }
             })
-    })
-    .catch(e => console.log(e));
+    }).catch(e => console.log(e));
     return promise
 }
 
@@ -141,17 +183,15 @@ function shiftTurnOrder(bodyMap) {
         var finishedUser = map.users.shift()
         map.users.push(finishedUser)
         map.save()
-    })
-    .catch(e => console.log(e));
+    }).catch(e => console.log(e));
     return promise
 }
 
-function invertTurnOrder(bodyMap) {
-    const promise = Map.findById(bodyMap._id)
+function invertTurnOrder(myMap) {
+    const promise = Map.findById(myMap._id)
     promise.then(map => {
         map.users.reverse()
         map.save()
-    })
-    .catch(e => console.log(e));
+    }).catch(e => console.log(e));
     return promise
 }
