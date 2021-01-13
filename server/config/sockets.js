@@ -22,7 +22,7 @@ module.exports = server => {
         });
         socket.on('disconnect', _ => {
             delete socketList[socket.decoded_token._id];
-            console.log('disconnected', socketList);
+            console.log('disconnected', socket.decoded_token._id);
         })
     });
 
