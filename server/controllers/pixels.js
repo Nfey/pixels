@@ -73,72 +73,50 @@ module.exports = io => {
                 })
                 .catch(e => res.json(e));
         },
-        takeInitialTurn: (req, res) => {
-            const pixelFromBody = req.body.pixel;
-            const mapFromBody = req.body.map;
-            const userId = String(req.user._id);
-            const activePlayerId = String(mapFromBody.users[0]._id);
-            //if 
-            if (mapFromBody.phase == "turn" && userId == activePlayerId) {
-                var pixelClaimedPromise = claimPixel(mapFromBody, pixelFromBody, userId);
-                var turnOrderShiftedPromise = shiftTurnOrder(mapFromBody);
-                var oncePixelHasBeenClaimedAndTurnOrderHasBeenShifted = Promise.all([pixelClaimedPromise, turnOrderShiftedPromise]);
-                oncePixelHasBeenClaimedAndTurnOrderHasBeenShifted.then(values => {
-                    var user = values[0];
-                    var updatedMap = results[1];
-                    var numClaimedPixels = updatedMap.pixels.filter(pixel => pixel.owner).length;
-                    const eachPlayerHasPlacedOnePixel = numClaimedPixels == updatedMap.users.length;
-                    const eachPlayerHasPlacedTwoPixels = numClaimedPixels == updatedMap.users.length * 2;
-                    if (eachPlayerHasPlacedOnePixel) {
-                        var inversionPromise = invertTurnOrder(updatedMap);
-                        inversionPromise.then(invertedMap => {
-                            io.to(String(invertedMap._id)).emit("turn-is-over", invertedMap);
-                        }).catch(e => console.log(e));
-                    }
-                    else if (eachPlayerHasPlacedTwoPixels) {
-                        map.phase = "tick";
-                        io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
-                    }
-                    else {
-                        io.to(String(updatedMap._id)).emit("turn-is-over", updatedMap);
-                    }
 
-                }).catch(e => console.log(e));
-            }
-        },
         takeInitialTurnAsync: async (req, res) => {
             console.log("Got here lol")
             try {
                 //variable declaration
-                const pixelFromBody = req.body.pixel;
+                const newColor = req.body.color;
+                const pixelId = req.body.pixel;
                 const mapId = req.body.map;
                 const userId = String(req.user._id);
                 console.log("made it to await")
                 console.log(mapId)
-                var map = await Map.findOne({_id: mapId}).populate("pixels")
+                var map = await Map.findOne({ _id: mapId }).populate("pixels")
+                var pixel = await Pixel.findOne({ _id: pixelId })
                 console.log("await is not the problem")
                 const activePlayerId = String(map.users[0]);
                 console.log(map.users[0], userId, map.phase)
                 //checks if game is in turn phase & it is requesting player's turn
                 console.log(userId, activePlayerId)
                 if (map.phase === "turn" && userId === activePlayerId) {
-                    await claimPixel(map, pixelFromBody, userId);
-                    var finishedUser = map.users.shift()
-                    map.users.push(finishedUser)
+                    var pixelInfo = await claimPixel(map, pixel, userId, newColor);
+                    console.log("PixelInfo:", pixelInfo)
+                    map = await Map.findOne({ _id: mapId }).populate("pixels")
+                    console.log("Placed Successfully:", pixelInfo.placeWasSuccessful)
+                    if (pixelInfo.placeWasSuccessful) {
+                        var finishedUser = map.users.shift()
+                        map.users.push(finishedUser)
+                        var numClaimedPixels = map.pixels.filter(pixel => pixel.owner).length;
+                        console.log("Claimed Pixels in Parent Funct:", map.pixels.filter(pixel => pixel.owner))
+                        const eachPlayerHasPlacedOnePixel = numClaimedPixels == map.users.length;
+                        const eachPlayerHasPlacedTwoPixels = numClaimedPixels == map.users.length * 2;
 
-                    var numClaimedPixels = map.pixels.filter(pixel => pixel.owner).length;
-                    const eachPlayerHasPlacedOnePixel = numClaimedPixels == map.users.length;
-                    const eachPlayerHasPlacedTwoPixels = numClaimedPixels == map.users.length * 2;
-
-                    if (eachPlayerHasPlacedOnePixel) {
-                        map.users.reverse()
+                        if (eachPlayerHasPlacedOnePixel) {
+                            map.users.reverse()
+                        }
+                        else if (eachPlayerHasPlacedTwoPixels) {
+                            map.phase = "tick";
+                        }
+                        await map.save()
+                        io.to(String(map._id)).emit("turn-is-over", map);
+                        res.json(map)
                     }
-                    else if (eachPlayerHasPlacedTwoPixels) {
-                        map.phase = "tick";
+                    else{
+                        res.json({error : "Cannot overlap pixels during turn phase, try again!"})
                     }
-                    map.save()
-                    io.to(String(map._id)).emit("turn-is-over", map);
-                    res.json(map)
                 }
                 else {
                     res.sendStatus(422)
@@ -166,24 +144,32 @@ function isAdjacent(myUser, myPixel) {
     return isAdjacent;
 }
 
-async function claimPixel(map, bodyPixel, idUser) {
+async function claimPixel(map, pixel, idUser, newColor) {
     // steal "claim" property from io
     var user = await User.findById(idUser).populate("pixels")
     var listOfClaimedPixels = map.pixels.filter(pixel => pixel.owner != undefined)
-    console.log("List of claimed pixels: ", listOfClaimedPixels)
-    var claimedPixelPositions = listOfClaimedPixels.map(pixel => pixel = pixel.map_pos)
-    console.log("BodyPixel map_pos: ", bodyPixel.map_pos)
-    console.log("Claimed pixel positions: ", claimedPixelPositions)
-    var placingOnClaimedSpace = claimedPixelPositions.includes(bodyPixel.map_pos)
-    var pixel = await Pixel.findById(bodyPixel._id)
-
+    console.log("listofClaimedPixels[0]'s type:", typeof listOfClaimedPixels[0])
+    console.log("List of claimed pixels:", listOfClaimedPixels)
+    var claimedPixelPositions = listOfClaimedPixels.map(pixel => {
+        console.log("Map_Pos:", pixel.map_pos)
+        return pixel.map_pos
+    })
+    console.log("Claimed Pixel Pos Type:", typeof claimedPixelPositions[0])
+    console.log("Pixel map_pos:", pixel.map_pos, typeof pixel.map_pos)
+    console.log("Claimed pixel positions:", claimedPixelPositions)
+    var placingOnClaimedSpace = claimedPixelPositions.some(position => JSON.stringify(position) === JSON.stringify(pixel.map_pos))
+    var placeWasSuccessful = false
     if (!placingOnClaimedSpace) {
-        pixel.color = bodyPixel.color;
+        placeWasSuccessful = true
+        pixel.color = newColor;
         pixel.owner = idUser;
-        pixel.save();
+        await pixel.save();
         user.pixels.push(pixel._id);
-        user.save();
+        await user.save();
+        map = await map.save()
     }
+    console.log("Place was successful:",placeWasSuccessful)
+    return {placeWasSuccessful : placeWasSuccessful, map : map}
 }
 
 function shiftTurnOrder(bodyMap) {

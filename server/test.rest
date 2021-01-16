@@ -19,7 +19,7 @@ content-type: application/json
 
 ###
 GET http://localhost:8000/api/maps
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmYxMjZkODk2YTBmNTM4MTRhYzJmMDMiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoibmZleSIsImlhdCI6MTYxMDQyNDQzNiwiZXhwIjoxNjEwNDMxNjM2fQ.3zJGOV0PGS64uj2dF-hyjKGDGXoWM0p_Tpd8ZMuMlaU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQ5NjUzZjI1OGNkNTIyMDQ0MzRlYzUiLCJlbWFpbCI6ImFzZGZAenhjdi5jb20iLCJ1c2VybmFtZSI6ImFzZGYiLCJpYXQiOjE2MTA3NjIxNjcsImV4cCI6MTYxMDc2OTM2N30.BkKFUV5rIbYH5m7-ea6YYaF0Qxn1CY5367dtyqJEiBc
 
 ###
 
@@ -65,32 +65,29 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmFkOWU5Z
 GET http://localhost:8000/api/pixels/5ffd0472db446c2b444d9ad6
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmYxMjZkODk2YTBmNTM4MTRhYzJmMDMiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoibmZleSIsImlhdCI6MTYxMDQxNjgyNSwiZXhwIjoxNjEwNDI0MDI1fQ.rzPvN349yVX2yE_NnLxRsBW8XD7FJ6MOmMl_rIeJShM
 ###
+
 POST http://localhost:8000/api/pixels/takeInitialTurnAsync
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQ5NjUzZjI1OGNkNTIyMDQ0MzRlYzUiLCJlbWFpbCI6ImFzZGZAenhjdi5jb20iLCJ1c2VybmFtZSI6ImFzZGYiLCJpYXQiOjE2MTA0MjU1MDcsImV4cCI6MTYxMDQzMjcwN30.MuAMk6v0vfwkbFEcKPPJEZKonFKW9Jkk-CJRBS1Z8ks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQ5NjUzZjI1OGNkNTIyMDQ0MzRlYzUiLCJlbWFpbCI6ImFzZGZAenhjdi5jb20iLCJ1c2VybmFtZSI6ImFzZGYiLCJpYXQiOjE2MTA3NjIxNjcsImV4cCI6MTYxMDc2OTM2N30.BkKFUV5rIbYH5m7-ea6YYaF0Qxn1CY5367dtyqJEiBc
 content-type: application/json
 
 {
-    "pixel": {
-        "map_pos": {
-            "map": "5ffd0472db446c2b444d9acc",
-            "x": "1",
-            "y": "1"
-        },
-        "color": "brown",
-        "heat": "0",
-        "effect": "none",
-        "strength": "1",
-        "attackers": [],
-        "_id": "5ffd0472db446c2b444d9acd",
-        "createdAt": "2021-01-12T02:07:46.188Z",
-        "updatedAt": "2021-01-12T02:07:46.188Z",
-        "__v": "0"
-    },
-    "map": "5ffd0472db446c2b444d9acc"
+    "pixel": "6002604569486d6f64cc6f41",
+    "map": "6002604569486d6f64cc6f34",
+    "color": "blue"
+}
+###
+POST http://localhost:8000/api/pixels/takeInitialTurnAsync
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmYxMjZkODk2YTBmNTM4MTRhYzJmMDMiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoibmZleSIsImlhdCI6MTYxMDc2MjA5OCwiZXhwIjoxNjEwNzY5Mjk4fQ.Tqhrt_Qv6TDUoBdP2fUDTAgWaDxdbZDulJrJiV3Ohu0
+content-type: application/json
+
+{
+    "pixel": "6002604569486d6f64cc6f47",
+    "map": "6002604569486d6f64cc6f34",
+    "color": "pink"
 }
 ###
 GET http://localhost:8000/api/user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQ5NjUzZjI1OGNkNTIyMDQ0MzRlYzUiLCJlbWFpbCI6ImFzZGZAenhjdi5jb20iLCJ1c2VybmFtZSI6ImFzZGYiLCJpYXQiOjE2MTA0MjEzMjEsImV4cCI6MTYxMDQyODUyMX0.tYk3kIwCiG23UcneOFr3JfTq6h7HE3eUIsCoGBTLFUA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmYxMjZkODk2YTBmNTM4MTRhYzJmMDMiLCJlbWFpbCI6Im5mZXkxQG1lLmNvbSIsInVzZXJuYW1lIjoibmZleSIsImlhdCI6MTYxMDc2MjA5OCwiZXhwIjoxNjEwNzY5Mjk4fQ.Tqhrt_Qv6TDUoBdP2fUDTAgWaDxdbZDulJrJiV3Ohu0
 ###
 
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQ5NjUzZjI1OGNkNTIyMDQ0MzRlYzUiLCJlbWFpbCI6ImFzZGZAenhjdi5jb20iLCJ1c2VybmFtZSI6ImFzZGYiLCJpYXQiOjE2MTA0MjQ0MDUsImV4cCI6MTYxMDQzMTYwNX0.RxVN5zXzuki-A7DT5suekA_brAKUVRgnyLLqB3aED2w

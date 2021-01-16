@@ -36,7 +36,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
               this.pixelGrid[y].push(map['pixels'][x + (this.map.width * y)])
             }
           }
-          // console.log(this.pixelGrid);
+          console.log(this.pixelGrid);
         });
         const claimUpdate$ = this._sockets.getClaimUpdates();
         this.claimUpdateSubscription = claimUpdate$.subscribe(
