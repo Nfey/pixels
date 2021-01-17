@@ -94,7 +94,8 @@ module.exports = io => {
                 if (map.phase === "turn" && userId === activePlayerId) {
                     var pixelInfo = await claimPixel(map, pixel, userId, newColor);
                     console.log("PixelInfo:", pixelInfo)
-                    map = await Map.findOne({ _id: mapId }).populate("pixels")
+                    map = await Map.findOne({ _id: mapId }).populate("pixels").populate("users")
+                    pixel = await Pixel.findOne({ _id: pixelId })
                     console.log("Placed Successfully:", pixelInfo.placeWasSuccessful)
                     if (pixelInfo.placeWasSuccessful) {
                         var finishedUser = map.users.shift()
@@ -111,11 +112,11 @@ module.exports = io => {
                             map.phase = "tick";
                         }
                         await map.save()
-                        io.to(String(map._id)).emit("turn-is-over", map);
+                        io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase});
                         res.json(map)
                     }
                     else{
-                        res.json({error : "Cannot overlap pixels during turn phase, try again!"})
+                        res.status(420).send({message: 'Cannot overlap pixels during turn phase'});
                     }
                 }
                 else {
@@ -163,13 +164,13 @@ async function claimPixel(map, pixel, idUser, newColor) {
         placeWasSuccessful = true
         pixel.color = newColor;
         pixel.owner = idUser;
-        await pixel.save();
+        var pixel = await pixel.save();
         user.pixels.push(pixel._id);
         await user.save();
         map = await map.save()
     }
     console.log("Place was successful:",placeWasSuccessful)
-    return {placeWasSuccessful : placeWasSuccessful, map : map}
+    return {placeWasSuccessful : placeWasSuccessful, map : map, pixel: pixel}
 }
 
 function shiftTurnOrder(bodyMap) {

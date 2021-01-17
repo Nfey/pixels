@@ -59,5 +59,8 @@ export class ApiService {
   getQueues(){
     return this._http.get('/api/queues');
   }
-  
+  takeInitialTurn(pixelId, mapId, color){
+    var body = {pixel: pixelId, map: mapId, color: color}
+    return this._http.post('/api/pixels/takeInitialTurnAsync', body);
+  }
 }

@@ -10,6 +10,7 @@ export class SocketService {
 
   claimObserver: Observer<any>;
   messageObserver: Observer<any>;
+  initialTurnObserver: Observer<any>;
   socket;
   constructor(private _router: Router) { }
 
@@ -18,6 +19,9 @@ export class SocketService {
   }
   getMessageUpdates() {
     return this.createMessageObservable();
+  }
+  getInitialTurnUpdates(){
+    return this.createInitialTurnObservable();
   }
   connect() {
     const accessToken = localStorage.getItem('access_token');
@@ -31,7 +35,10 @@ export class SocketService {
     this.socket.on('redirectToMap', map => {
       console.log('redirect');
       this._router.navigate(['/maps', map._id]);
-    })
+    });
+    this.socket.on('turn-is-over', map => {
+      return this.initialTurnObserver.next(map);
+    });
   }
   joinRoom(id) {
     this.socket.emit('join-room', id);
@@ -51,5 +58,8 @@ export class SocketService {
   }
   createMessageObservable() {
     return new Observable(observer => this.messageObserver = observer);
+  }
+  createInitialTurnObservable() {
+    return new Observable(observer => this.initialTurnObserver = observer);
   }
 }
