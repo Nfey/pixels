@@ -19,5 +19,5 @@
         <button (click)="deselectPixels()" class="btn btn-danger">Deselect</button>
     </div>
 </div>
-<h3 *ngIf="user && map && map.users[0] == user">It is your turn</h3>
+<h3 *ngIf="user && map && map.users[0] && map.users[0]._id === user._id">It is your turn</h3>
 <app-chatbox></app-chatbox>
