@@ -60,6 +60,7 @@ export class MapViewComponent implements OnInit, OnDestroy {
           var x = data['pixel']['map_pos'].x;
           this.pixelGrid[y][x] = data['pixel'];
           this.map.phase = data['map_phase'];
+          this.map.users = data['playerList'];
         })
       });
     });

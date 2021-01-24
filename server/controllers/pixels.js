@@ -112,7 +112,7 @@ module.exports = io => {
                             map.phase = "tick";
                         }
                         await map.save()
-                        io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase});
+                        io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase, playerList : map.users});
                         res.json(map)
                     }
                     else{
