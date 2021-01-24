@@ -110,10 +110,13 @@ module.exports = io => {
                         }
                         else if (eachPlayerHasPlacedTwoPixels) {
                             map.phase = "tick";
+                            console.log(map)
+                            //map.startTickTimer()
                         }
                         await map.save()
                         io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase, playerList : map.users});
                         res.json(map)
+
                     }
                     else{
                         res.status(420).send({message: 'Cannot overlap pixels during turn phase'});

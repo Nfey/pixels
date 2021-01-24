@@ -9,7 +9,36 @@ var MapSchema = new mongoose.Schema({
     tickTime: { type: Number, required: true, default: 30 },
     tickTotal: { type: Number, required: true, default: 4 },
     currentTick: { type: Number, required: true, default: 1 },
+    timerId: {type: Number, required: false}
 }, { timestamps: true });
+
+MapSchema.methods.startTickTimer = function(){
+    console.log("startTickTimer() ran")
+    if(this.currentTick <= this.tickTotal){
+        this.timerId = setTimeout(this.tickTime * 1000, () => this.tick())
+    }
+    else{
+        this.phase = "postGame"
+    }   
+}
+
+MapSchema.methods.stopTickTimer = function(){
+    clearTimeout(this.timerId)
+}
+
+MapSchema.methods.tick = function(){
+    console.log("tick() ran")
+    this.combatHandler()
+    this.currencyHandler()
+    this.currentTick++
+    this.startTickTimer()
+}
+
+MapSchema.methods.combatHandler = function(){
+}
+
+MapSchema.methods.currencyHandler = function(){
+}
 const Map = mongoose.model("Map", MapSchema);
 module.exports = {
     schema: MapSchema,
