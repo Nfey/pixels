@@ -6,9 +6,9 @@ var MapSchema = new mongoose.Schema({
     pixels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Pixel" }],
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     phase: { type: String, default: "turn" },
-    tickTime: {type: Number, required: true, default: 30},
-    tickTotal: {type: Number, required: true, default: 4},
-    currentTick: {type: Number, required: true, default: 1},
+    tickTime: { type: Number, required: true, default: 30 },
+    tickTotal: { type: Number, required: true, default: 4 },
+    currentTick: { type: Number, required: true, default: 1 },
 }, { timestamps: true });
 const Map = mongoose.model("Map", MapSchema);
 module.exports = {
