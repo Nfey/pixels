@@ -14,30 +14,38 @@ var MapSchema = new mongoose.Schema({
 
 MapSchema.methods.startTickTimer = function(){
     console.log("startTickTimer() ran")
+    console.log(this.currentTick)
+    console.log(this.tickTotal)
     if(this.currentTick <= this.tickTotal){
-        this.timerId = setTimeout(this.tickTime * 1000, () => this.tick())
+        setTimeout(() => this.tick(this), this.tickTime * 100)
     }
     else{
         this.phase = "postGame"
     }   
+}
+MapSchema.methods.test = function(){
+    console.log('test is running');
 }
 
 MapSchema.methods.stopTickTimer = function(){
     clearTimeout(this.timerId)
 }
 
-MapSchema.methods.tick = function(){
+MapSchema.methods.tick = function(instance){
     console.log("tick() ran")
-    this.combatHandler()
-    this.currencyHandler()
-    this.currentTick++
-    this.startTickTimer()
+    console.log(instance.currentTick);
+    instance.combatHandler()
+    instance.currencyHandler()
+    instance.currentTick++
+    instance.startTickTimer()
 }
 
 MapSchema.methods.combatHandler = function(){
+    console.log('handling combat');
 }
 
 MapSchema.methods.currencyHandler = function(){
+    console.log('handling currency');
 }
 const Map = mongoose.model("Map", MapSchema);
 module.exports = {

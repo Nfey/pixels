@@ -110,8 +110,8 @@ module.exports = io => {
                         }
                         else if (eachPlayerHasPlacedTwoPixels) {
                             map.phase = "tick";
-                            console.log(map)
-                            //map.startTickTimer()
+                            console.log("isInstance:",map instanceof Map);
+                            map.startTickTimer();
                         }
                         await map.save()
                         io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase, playerList : map.users});
