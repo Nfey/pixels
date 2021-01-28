@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ export class RegisterComponent implements OnInit {
   passwordsMatch: Boolean;
   user: { firstName: String, lastName: String, email: String, username: String, password: String, passwordConfirmation: String };
 
-  constructor(private _auth: AuthService, private _router: Router) {}
+  constructor(private _auth: AuthService, private _router: Router, private _socket: SocketService) {}
 
   ngOnInit() {
     this.user = { firstName: "", lastName: "", email: "", username: "", password: "", passwordConfirmation: "" }
@@ -24,6 +25,7 @@ export class RegisterComponent implements OnInit {
       this.passwordsMatch = true;
       this._auth.register(this.user).subscribe(user => {
         this._auth.login(user['email'], this.user['password']).subscribe(res => {
+          this._socket.connect()
           this._router.navigate(['/']);
         }, err => {
           console.log(err);
