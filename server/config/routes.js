@@ -1,16 +1,12 @@
 const path = require('path');
 const users = require('../controllers/users');
 const maps = require('../controllers/maps');
+const pixels = require('../controllers/pixels');
+const messages = require('../controllers/messages');
+const queues = require('../controllers/queues');
 
 
-
-module.exports = (app, server) => {
-    const sockets = require('./sockets')(server);
-    const io = sockets.io;
-    const socketList = sockets.socketList;
-    const pixels = require('../controllers/pixels')(io);
-    const messages = require('../controllers/messages')(io);
-    const queues = require('../controllers/queues')(io, socketList);
+module.exports = (app) => {
 
     app.get('/api/users', (req, res) => users.getAll(req, res));
     app.get('/api/users/:id', users.authenticateToken, (req, res) => users.getUserByParamId(req, res));

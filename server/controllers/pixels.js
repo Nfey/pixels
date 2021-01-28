@@ -2,133 +2,132 @@ const mongoose = require('../../server/config/mongoose');
 const Pixel = require('../models/pixel').model;
 const Map = require('../models/map').model;
 const User = require('../models/user');
+var io = require('../config/sockets').io;
 
-module.exports = io => {
-    return {
-        getAll: (req, res) => {
-            Pixel.find()
-                .then(pixels => res.json(pixels))
-                .catch(e => res.status(422).json(e));
-        },
-        getOne: (req, res) => {
-            Pixel.findById(req.params.id)
-                .then(pixel => res.json(pixel))
-                .catch(e => res.status(422).json(e));
-        },
-        getByMap: (req, res) => {
-            id = mongoose.Types.ObjectId(req.params.id);
-            Pixel.find({ 'map_pos.map': id }).sort('map_pos.y').sort('map_pos.x')
-                .then(pixels => res.json(pixels))
-                .catch(e => res.status(422).json(e));
-        },
-        create: (req, res) => {
-            req.body.map_pos.map = mongoose.Types.ObjectId(req.body.map_pos.map);
-            Pixel.create(req.body)
-                .then(pixel => {
-                    res.json(pixel);
-                    Map.findByIdAndUpdate(pixel.map_pos.map, { $push: { pixels: pixel } }, { useFindAndModify: false })
-                        .then()
-                        .catch(e => console.log(e));
-                })
-                .catch(e => {
-                    res.status(422).json(e);
-                    console.log('pixel creation error');
-                });
-        },
-        update: (req, res) => {
-            Pixel.findByIdAndUpdate(req.params.id, req.body, { useFindAndModify: false })
-                .then(pixel => res.json(pixel))
-                .catch(e => res.status(422).json(e));
-        },
-        delete: (req, res) => {
-            Pixel.findByIdAndRemove(req.params.id, { useFindAndModify: false })
-                .then(pixel => res.json(pixel))
-                .catch(e => res.status(422).json(e));
-        },
-        claim: (req, res) => {
-            User.findById(req.user._id).populate("pixels")
-                .then(user => {
-                    Pixel.findById(req.body._id) //req.body._id is the id of the pixel clicked on
-                        .then(pixel => {
-                            if (isAdjacent(user, pixel) || user.pixels.filter(userPixel => String(userPixel.map_pos.map) == String(pixel.map_pos.map)).length == 0) {
-                                pixel.color = req.body.color;
-                                User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false })
-                                    .then(previousOwner => {
-                                        pixel.owner = user._id;
-                                        pixel.save();
-                                        if (!user.pixels.includes(pixel._id)) {
-                                            user.pixels.push(pixel);
-                                            user.save();
-                                        }
-                                        io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
-                                        res.json(pixel);
-                                    })
-                                    .catch(e => res.status(420).json(e));
-                            }
-                            else {
-                                res.status(418).send("ERROR: Pixel placed is not adjacent");
-                            }
-                        })
-                        .catch(e => res.status(422).json(e));
-                })
-                .catch(e => res.json(e));
-        },
-
-        takeInitialTurnAsync: async (req, res) => {
-            console.log("Got here lol")
-            try {
-                //variable declaration
-                const newColor = req.body.color;
-                const pixelId = req.body.pixel;
-                const mapId = req.body.map;
-                const userId = String(req.user._id);
-                console.log("made it to await")
-                console.log(mapId)
-                var map = await Map.findOne({ _id: mapId }).populate("pixels")
-                var pixel = await Pixel.findOne({ _id: pixelId })
-                console.log("await is not the problem")
-                const activePlayerId = String(map.users[0]);
-                console.log(map.users[0], userId, map.phase)
-                //checks if game is in turn phase & it is requesting player's turn
-                console.log(userId, activePlayerId)
-                if (map.phase === "turn" && userId === activePlayerId) {
-                    var pixelInfo = await claimPixel(map, pixel, userId, newColor);
-                    console.log("PixelInfo:", pixelInfo)
-                    map = await Map.findOne({ _id: mapId }).populate("pixels").populate("users")
-                    pixel = await Pixel.findOne({ _id: pixelId })
-                    console.log("Placed Successfully:", pixelInfo.placeWasSuccessful)
-                    if (pixelInfo.placeWasSuccessful) {
-                        var finishedUser = map.users.shift()
-                        map.users.push(finishedUser)
-                        var numClaimedPixels = map.pixels.filter(pixel => pixel.owner).length;
-                        console.log("Claimed Pixels in Parent Funct:", map.pixels.filter(pixel => pixel.owner))
-                        const eachPlayerHasPlacedOnePixel = numClaimedPixels == map.users.length;
-                        const eachPlayerHasPlacedTwoPixels = numClaimedPixels == map.users.length * 2;
-
-                        if (eachPlayerHasPlacedOnePixel) {
-                            map.users.reverse()
+module.exports = {
+    getAll: (req, res) => {
+        Pixel.find()
+            .then(pixels => res.json(pixels))
+            .catch(e => res.status(422).json(e));
+    },
+    getOne: (req, res) => {
+        Pixel.findById(req.params.id)
+            .then(pixel => res.json(pixel))
+            .catch(e => res.status(422).json(e));
+    },
+    getByMap: (req, res) => {
+        id = mongoose.Types.ObjectId(req.params.id);
+        Pixel.find({ 'map_pos.map': id }).sort('map_pos.y').sort('map_pos.x')
+            .then(pixels => res.json(pixels))
+            .catch(e => res.status(422).json(e));
+    },
+    create: (req, res) => {
+        req.body.map_pos.map = mongoose.Types.ObjectId(req.body.map_pos.map);
+        Pixel.create(req.body)
+            .then(pixel => {
+                res.json(pixel);
+                Map.findByIdAndUpdate(pixel.map_pos.map, { $push: { pixels: pixel } }, { useFindAndModify: false })
+                    .then()
+                    .catch(e => console.log(e));
+            })
+            .catch(e => {
+                res.status(422).json(e);
+                console.log('pixel creation error');
+            });
+    },
+    update: (req, res) => {
+        Pixel.findByIdAndUpdate(req.params.id, req.body, { useFindAndModify: false })
+            .then(pixel => res.json(pixel))
+            .catch(e => res.status(422).json(e));
+    },
+    delete: (req, res) => {
+        Pixel.findByIdAndRemove(req.params.id, { useFindAndModify: false })
+            .then(pixel => res.json(pixel))
+            .catch(e => res.status(422).json(e));
+    },
+    claim: (req, res) => {
+        User.findById(req.user._id).populate("pixels")
+            .then(user => {
+                Pixel.findById(req.body._id) //req.body._id is the id of the pixel clicked on
+                    .then(pixel => {
+                        if (isAdjacent(user, pixel) || user.pixels.filter(userPixel => String(userPixel.map_pos.map) == String(pixel.map_pos.map)).length == 0) {
+                            pixel.color = req.body.color;
+                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false })
+                                .then(previousOwner => {
+                                    pixel.owner = user._id;
+                                    pixel.save();
+                                    if (!user.pixels.includes(pixel._id)) {
+                                        user.pixels.push(pixel);
+                                        user.save();
+                                    }
+                                    io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
+                                    res.json(pixel);
+                                })
+                                .catch(e => res.status(420).json(e));
                         }
-                        else if (eachPlayerHasPlacedTwoPixels) {
-                            map.phase = "tick";
-                            console.log("isInstance:",map instanceof Map);
-                            map.startTickTimer();
+                        else {
+                            res.status(418).send("ERROR: Pixel placed is not adjacent");
                         }
-                        await map.save()
-                        io.to(String(map._id)).emit("turn-is-over", {pixel: pixel, map_phase: map.phase, playerList : map.users});
-                        res.json(map)
+                    })
+                    .catch(e => res.status(422).json(e));
+            })
+            .catch(e => res.json(e));
+    },
 
+    takeInitialTurnAsync: async (req, res) => {
+        console.log("Got here lol")
+        try {
+            //variable declaration
+            const newColor = req.body.color;
+            const pixelId = req.body.pixel;
+            const mapId = req.body.map;
+            const userId = String(req.user._id);
+            console.log("made it to await")
+            console.log(mapId)
+            var map = await Map.findOne({ _id: mapId }).populate("pixels")
+            var pixel = await Pixel.findOne({ _id: pixelId })
+            console.log("await is not the problem")
+            const activePlayerId = String(map.users[0]);
+            console.log(map.users[0], userId, map.phase)
+            //checks if game is in turn phase & it is requesting player's turn
+            console.log(userId, activePlayerId)
+            if (map.phase === "turn" && userId === activePlayerId) {
+                var pixelInfo = await claimPixel(map, pixel, userId, newColor);
+                console.log("PixelInfo:", pixelInfo)
+                map = await Map.findOne({ _id: mapId }).populate("pixels").populate("users")
+                pixel = await Pixel.findOne({ _id: pixelId })
+                console.log("Placed Successfully:", pixelInfo.placeWasSuccessful)
+                if (pixelInfo.placeWasSuccessful) {
+                    var finishedUser = map.users.shift()
+                    map.users.push(finishedUser)
+                    var numClaimedPixels = map.pixels.filter(pixel => pixel.owner).length;
+                    console.log("Claimed Pixels in Parent Funct:", map.pixels.filter(pixel => pixel.owner))
+                    const eachPlayerHasPlacedOnePixel = numClaimedPixels == map.users.length;
+                    const eachPlayerHasPlacedTwoPixels = numClaimedPixels == map.users.length * 2;
+
+                    if (eachPlayerHasPlacedOnePixel) {
+                        map.users.reverse()
                     }
-                    else{
-                        res.status(420).send({message: 'Cannot overlap pixels during turn phase'});
+                    else if (eachPlayerHasPlacedTwoPixels) {
+                        map.phase = "tick";
+                        console.log("isInstance:", map instanceof Map);
+                        map.startTickTimer();
                     }
+                    await map.save()
+                    io.to(String(map._id)).emit("turn-is-over", { pixel: pixel, map_phase: map.phase, playerList: map.users });
+                    res.json(map)
+
                 }
                 else {
-                    res.sendStatus(422)
+                    res.status(420).send({ message: 'Cannot overlap pixels during turn phase' });
                 }
             }
-            catch (e) {
-                res.sendStatus(500);
+            else {
+                res.sendStatus(422)
             }
+        }
+        catch (e) {
+            res.sendStatus(500);
         }
     }
 }
@@ -172,8 +171,8 @@ async function claimPixel(map, pixel, idUser, newColor) {
         await user.save();
         map = await map.save()
     }
-    console.log("Place was successful:",placeWasSuccessful)
-    return {placeWasSuccessful : placeWasSuccessful, map : map, pixel: pixel}
+    console.log("Place was successful:", placeWasSuccessful)
+    return { placeWasSuccessful: placeWasSuccessful, map: map, pixel: pixel }
 }
 
 function shiftTurnOrder(bodyMap) {

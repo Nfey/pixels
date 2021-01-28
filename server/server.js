@@ -6,5 +6,6 @@ const dotenv = require('dotenv').config();
 app.use(express.static(path.join(__dirname, '../client/dist/client')));
 app.use(express.json());
 
-require('./config/routes')(app, server);
+require('./config/sockets').setup(server);
+require('./config/routes')(app);
 
