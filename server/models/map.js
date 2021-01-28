@@ -47,6 +47,21 @@ MapSchema.methods.combatHandler = function(){
 MapSchema.methods.currencyHandler = function(){
     console.log('handling currency');
 }
+MapSchema.methods.populateWithPixels = async function(){
+    try{
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let pixel = await mongoose.model('Pixel').create({ map_pos: { map: this._id, x: x, y: y } })
+                this.pixels.push(pixel)
+                await this.save();
+            }
+        }
+        return this;
+    }
+    catch(e) {
+        console.log(e)
+    }
+}
 const Map = mongoose.model("Map", MapSchema);
 module.exports = {
     schema: MapSchema,
