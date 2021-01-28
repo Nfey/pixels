@@ -45,35 +45,17 @@ module.exports = {
             .then(pixel => res.json(pixel))
             .catch(e => res.status(422).json(e));
     },
-    claim: (req, res) => {
-        User.findById(req.user._id).populate("pixels")
-            .then(user => {
-                Pixel.findById(req.body._id) //req.body._id is the id of the pixel clicked on
-                    .then(pixel => {
-                        if (isAdjacent(user, pixel) || user.pixels.filter(userPixel => String(userPixel.map_pos.map) == String(pixel.map_pos.map)).length == 0) {
-                            pixel.color = req.body.color;
-                            User.findByIdAndUpdate(pixel.owner, { $pull: { pixels: pixel._id } }, { useFindAndModify: false })
-                                .then(previousOwner => {
-                                    pixel.owner = user._id;
-                                    pixel.save();
-                                    if (!user.pixels.includes(pixel._id)) {
-                                        user.pixels.push(pixel);
-                                        user.save();
-                                    }
-                                    io.to(String(pixel.map_pos.map)).emit('pixelClaimed', pixel);
-                                    res.json(pixel);
-                                })
-                                .catch(e => res.status(420).json(e));
-                        }
-                        else {
-                            res.status(418).send("ERROR: Pixel placed is not adjacent");
-                        }
-                    })
-                    .catch(e => res.status(422).json(e));
-            })
-            .catch(e => res.json(e));
+    claim: async (req, res) => {
+        //TODO: fix error handling
+        try {
+            var pixel = req.body;
+            var user = await User.findById(req.user._id).populate("pixels");
+            var updatedPixel = await user.claimPixel(pixel);
+            res.json(updatedPixel);
+        } catch(e){
+            res.sendStatus(418);
+        }
     },
-
     takeInitialTurnAsync: async (req, res) => {
         console.log("Got here lol")
         try {
@@ -175,24 +157,24 @@ async function claimPixel(map, pixel, idUser, newColor) {
     return { placeWasSuccessful: placeWasSuccessful, map: map, pixel: pixel }
 }
 
-function shiftTurnOrder(bodyMap) {
-    const promise = Map.findById(bodyMap._id)
-    promise.then(map => {
-        var finishedUser = map.users.shift()
-        map.users.push(finishedUser)
-        map.save()
-    }).catch(e => console.log(e));
-    return promise
-}
+// function shiftTurnOrder(bodyMap) {
+//     const promise = Map.findById(bodyMap._id)
+//     promise.then(map => {
+//         var finishedUser = map.users.shift()
+//         map.users.push(finishedUser)
+//         map.save()
+//     }).catch(e => console.log(e));
+//     return promise
+// }
 
-function invertTurnOrder(myMap) {
-    const promise = Map.findById(myMap._id)
-    promise.then(map => {
-        map.users.reverse()
-        map.save()
-    }).catch(e => console.log(e));
-    return promise
-}
+// function invertTurnOrder(myMap) {
+//     const promise = Map.findById(myMap._id)
+//     promise.then(map => {
+//         map.users.reverse()
+//         map.save()
+//     }).catch(e => console.log(e));
+//     return promise
+// }
 /*
 
 */
